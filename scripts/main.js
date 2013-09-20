@@ -91,54 +91,6 @@
 
     var contactListView = new contactListView({collection: new personCollection()});
 
-    var UserEditView = Backbone.View.extend({
-      el: '.page',
-      events: {
-        'submit .edit-user-form': 'saveUser',
-        'click .delete': 'deleteUser'
-      },
-      saveUser: function (ev) {
-        var userDetails = $(ev.currentTarget).serializeObject();
-        var personmodel = new personModel();
-        personmodel.save(userDetails, {
-          success: function (contacts) {
-            router.navigate('', {trigger:true});
-          }
-        });
-        return false;
-      },
-      deleteUser: function (ev) {
-        var that = this;
-
-        /*that.personmodel = new personModel({id: options.id});
-        that.personmodel.fetch({
-          success: function (contacts) {   
-            var template = _.template($('#edit-user-template').html(), {contacts: contacts});
-            that.$el.html(template);
-          }
-        })*/
-      },
-      render: function (options) {
-        var that = this;
-
-        if(options.id) {
-          console.log(options.id);
-          that.personmodel = new personModel({id: options.id});
-          that.personmodel.fetch({
-            success: function (contacts) {   
-              var template = _.template($('#edit-user-template').html(), {contacts: contacts});
-              that.$el.html(template);
-            }
-          })
-        } else {
-          var template = _.template($('#edit-user-template').html(), {contacts: null});
-          that.$el.html(template);
-        }
-      }
-    });
-
-    var userEditView = new UserEditView();
-
     var Router = Backbone.Router.extend({
         routes: {
           "": "home", 
