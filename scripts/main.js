@@ -33,17 +33,25 @@
         this.contacts_list = $(this.el);
       },
       addPerson: function (evt) {
-        var that = this;
         var person = new personModel({
           name: this.input_name.val(),
           number: this.input_number.val(),
           username: this.input_username.val()
         });
+
         this.collection.add(person);
         person.set("position", this.collection.length);
 
         var view = new PersonView({model: person});
-        this.contacts_list.append(view.render().el);        
+        this.contacts_list.append(view.render().el); 
+
+        //save entry
+        person.save(person.toJSON(), {
+          success: function (contact) {
+            router.navigate('', {trigger: true});
+          }
+        }); 
+
       },
       render: function () {
         var self = this;
@@ -76,15 +84,14 @@
     });
 
     var PersonView = Backbone.View.extend({
-        tagName: 'tr',
-        //template: $('#contact_template').html(),        
+        tagName: 'tr',                
         initialize: function() {
             
         },
-        render: function() {            
-            var compiledTemplate = _.template($('#contact_template').html());
-            this.$el.html(compiledTemplate(this.model.toJSON()));
-            return this;
+        render: function() {
+          var compiledTemplate = _.template($('#contact_template').html());
+          this.$el.html(compiledTemplate(this.model.toJSON()));
+          return this;
         }
 
     });
