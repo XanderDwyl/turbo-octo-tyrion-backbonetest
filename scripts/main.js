@@ -1,105 +1,160 @@
 (function ($, BB, _) {
+    $.fn.serializeObject = function() {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+    };
 
-	$('#add_contact').tooltip();
+    $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+      options.url = 'http://localhost:9090' + options.url;
+    });
 
-	var App = Backbone.View.extend({
-		el: "#contacts",
-		events: {
-			'click #add_contact': 'addPerson',
-			'click .edit': 'editPerson'
-		},
-		initialize: function () {
-			this.input_name = $('#inputs input[name=fullname]');
-			this.input_number = $('#inputs input[name=number]');
-			this.input_username = $('#inputs input[name=username]');
-			this.contacts_list = $('.table tbody');
-			this.contacts_editlist = $('tr#id9');
-		},
-		addPerson: function (evt) {
+    $('#add_contact').tooltip();
 
-			var person = new PersonModel({
-				name: this.input_name.val(),
-				number: this.input_number.val(),
-				username: this.input_username.val()
-			});
+    var contactListView = Backbone.View.extend({
+      el: '.page .table tbody',   
+      events: {
+        'click #add_contact': 'addPerson'
+      },
+      initialize: function () {
+        this.input_name = $('#inputs input[name=fullname]');
+        this.input_number = $('#inputs input[name=number]');
+        this.input_username = $('#inputs input[name=username]');
+        this.contacts_list = $(this.el);
+      },
+      addPerson: function (evt) {
+        var that = this;
+        var person = new personModel({
+          name: this.input_name.val(),
+          number: this.input_number.val(),
+          username: this.input_username.val()
+        });
+        this.collection.add(person);
+        person.set("position", this.collection.length);
 
-			this.collection.add(person);
-			person.set("position", this.collection.length);
+        var view = new PersonView({model: person});
+        this.contacts_list.append(view.render().el);        
+      },
+      render: function () {
+        var self = this;
+        var contacts = new personCollection();
+        contacts.fetch({
+          success: function (contactInfo) {         
+            _.each(contactInfo.models, function(contact) {              
+                var person = new personModel({
+                  name: contact.get('name'),
+                  number: contact.get('number'),
+                  username: contact.get('username')
+                });
+                self.collection.add(person);
+                person.set("position", self.collection.length);
+                var view = new PersonView({model: person});
+                self.contacts_list.append(view.render().el);
+            });
+          }
+        })
+      }
+    });
+    
+    var personModel = Backbone.Model.extend({
+      urlRoot: '/contacts'
+    });
 
-			var view = new PersonView({model: person});
-			this.contacts_list.append(view.render().el);
-		},
-		editPerson: function (evt) {
-			var person = new PersonModel({
-				name: this.input_name.val(),
-				number: this.input_number.val(),
-				username: this.input_username.val()
-			});
+    var personCollection = Backbone.Collection.extend({
+      model: personModel,
+      url: '/contacts'
+    });
 
-			this.collection.add(person);
-			person.set("position", this.collection.length - 1);
+    var PersonView = Backbone.View.extend({
+        tagName: 'tr',
+        //template: $('#contact_template').html(),        
+        initialize: function() {
+            
+        },
+        render: function() {            
+            var compiledTemplate = _.template($('#contact_template').html());
+            this.$el.html(compiledTemplate(this.model.toJSON()));
+            return this;
+        }
 
-			var editView = new PersonEdit({model: person});			
-			this.contacts_editlist.append(editView.render().el);
-		}
-	});
+    });
 
-	var PersonModel = Backbone.Model.extend({
-		defaults: {
-			'name': '-',
-			'number': '-',
-			'username': '-'
-		},
-		initialize: function () {
+    var contactListView = new contactListView({collection: new personCollection()});
 
-		}
-	});
+    var UserEditView = Backbone.View.extend({
+      el: '.page',
+      events: {
+        'submit .edit-user-form': 'saveUser',
+        'click .delete': 'deleteUser'
+      },
+      saveUser: function (ev) {
+        var userDetails = $(ev.currentTarget).serializeObject();
+        var personmodel = new personModel();
+        personmodel.save(userDetails, {
+          success: function (contacts) {
+            router.navigate('', {trigger:true});
+          }
+        });
+        return false;
+      },
+      deleteUser: function (ev) {
+        var that = this;
 
-	var PersonCollection = Backbone.Collection.extend({
-		model: PersonModel,
-		url: '/contacts',
-		initialize: function () {
+        /*that.personmodel = new personModel({id: options.id});
+        that.personmodel.fetch({
+          success: function (contacts) {   
+            var template = _.template($('#edit-user-template').html(), {contacts: contacts});
+            that.$el.html(template);
+          }
+        })*/
+      },
+      render: function (options) {
+        var that = this;
 
-		}
-	});
+        if(options.id) {
+          console.log(options.id);
+          that.personmodel = new personModel({id: options.id});
+          that.personmodel.fetch({
+            success: function (contacts) {   
+              var template = _.template($('#edit-user-template').html(), {contacts: contacts});
+              that.$el.html(template);
+            }
+          })
+        } else {
+          var template = _.template($('#edit-user-template').html(), {contacts: null});
+          that.$el.html(template);
+        }
+      }
+    });
 
-	var PersonView = Backbone.View.extend({
-		tagName: 'tr id=id9',
-		template: $('#contact_template').html(),		
-		initialize: function() {
+    var userEditView = new UserEditView();
 
-		},
-		render: function() {
-			var contact = new PersonCollection();
-			
-			contact.fetch(
-			{
-				success:function()
-				{
-		        	//work on this...
-				}
-			});
-			
-			var compiledTemplate = _.template(this.template);
-			this.$el.html(compiledTemplate(this.model.toJSON()))	
-			return this;
-		}
-	});
-	var PersonEdit = Backbone.View.extend({
-		tagName: 'tr',
-		template: $('#edit_mode_template').html(),
-		initialize: function() {
+    var Router = Backbone.Router.extend({
+        routes: {
+          "": "home", 
+          "edit/:id": "edit",
+          "new": "edit",
+        }
+    });
 
-		},
-		render: function() {
-			var compiledTemplate = _.template(this.template);
-			this.$el.html(compiledTemplate(this.model.toJSON()))
-			return this;
-		}
-	});
+    var router = new Router;
+    router.on('route:home', function() {
+      // render user list
+      contactListView.render();
+    })
+    router.on('route:edit', function(id) {
+      userEditView.render({id: id});
+    })
 
-	var contactApp = new App({collection: new PersonCollection()});
-
-
-
+    Backbone.history.start();               
 })(jQuery, Backbone, _)

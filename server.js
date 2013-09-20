@@ -7,8 +7,8 @@ mongoose.connection.once('open', function () {
 	console.log('MongoDB connection opened.');
 });
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error: '));
-var options = require('./creds');
-mongoose.connect('mongodb://localhost:27017/test', options);
+//var options = require('./creds');
+mongoose.connect('mongodb://localhost:27017/test');
 
 var ContactSchema = new mongoose.Schema({
 	name: String,
@@ -21,7 +21,7 @@ var Contact = mongoose.model('contacts', ContactSchema);
 var corsSettings = function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-	res.header('Access-Control-Allow-Headers', 'origin, content-type, accept');
+	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 	// deal with OPTIONS method during a preflight request
 	if (req.method === 'OPTIONS') {
 		res.send(200);
@@ -30,8 +30,8 @@ var corsSettings = function(req, res, next) {
 	}
 }
 
-app.use(express.bodyParser());
 app.use(corsSettings);
+app.use(express.bodyParser());
 
 function listContacts(req, res) {
 	var options = {};

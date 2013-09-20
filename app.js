@@ -23,10 +23,10 @@ app.use(allowCrossDomain);
 app.use(app.router);
 
 // Open the connection to the server
-MongoClient.connect('mongodb://localhost:27017/contacts', function(err, db) {    
+MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {    
     if(err) throw err;
 
-    var collection = db.collection('manager');
+    var collection = db.collection('contacts');
 
     app.get('/contacts', function (req, res) {
         collection.find().toArray(function (err, doc){
