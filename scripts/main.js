@@ -86,7 +86,7 @@
             }
             
             if(delOk) {
-              self.$el.find('tr#' + evt.target.title).remove();
+              self.$el.find('tr#' + evt.target.id).remove();
               alert("Delete successfully!");
             } else {
               alert("unknown contact");
@@ -138,7 +138,11 @@
     });
     
     var contactEditView = Backbone.View.extend({
-      el: '.page .table tbody',   
+      el: '.page .table tbody',
+      events: {
+        'click .edit'     : 'render',
+        'click .done'     : 'saveContact'
+      },
       initialize: function () {
         this.input_name = $('#inputs input[name=fullname]');
         this.input_number = $('#inputs input[name=number]');
@@ -167,11 +171,11 @@
             }
             
             if(editOk) {
-              self.$el.find('tr#' + evt.target.title).empty();      // empty the field
+              self.$el.find('tr#' + evt.target.id).empty();      // empty the field
     
-              person.set("position", (evt.target.title).replace(/[^0-9]+/ig,""));
+              person.set("position", evt.target.title);
               var view = new editView({model: person});
-              self.$el.find('tr#' + evt.target.title).append(view.render().el.innerHTML);
+              self.$el.find('tr#' + evt.target.id).append(view.render().el.innerHTML);
             } else {
               alert("unknown contact");
             } 
@@ -186,34 +190,27 @@
         this.input_number = $('input[name=editNumber]');
         this.input_username = $('input[name=editUsername]');
         
-        person = new personModel({
+        updateContact = new personModel({
           name: this.input_name.val(),
           number: this.input_number.val(),
           username: this.input_username.val(),
-          _id: evt.target.id
+          //_id: evt.target.id
         });
 
         this.collection.add(person);
-        console.log(evt.currentTarget);
-        //person.set("position", this.collection.length);
+        console.log(evt.target.id);
 
-        //var view = new PersonView({model: person});
-        //this.contacts_list.append(view.render().el); 
-
-        //update entry
-
-        var updateContact = new personModel();
-
-        updateContact.save(person, {
+        updateContact.save({_id: evt.target.id}, {
           success: function (contact) {
-            router.navigate(evt.target.id, {trigger: true});
+            //router.navigate('', {trigger: true});
+            alert(updateContact.toJSON());
           }
         });
       }
     });
     var PersonView = Backbone.View.extend({
         tagName: function () {
-          return 'tr id=' + this.model.get('position') + this.model.get('username');
+          return 'tr id=' + this.model.get('id');
         },                
         initialize: function() {
             
