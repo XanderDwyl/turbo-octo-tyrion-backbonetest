@@ -4878,7 +4878,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .badge {
   display: inline-block;
   min-width: 10px;
-  padding: 3px 7px;
+  padding: 3px 15px;
   font-size: 12px;
   font-weight: bold;
   line-height: 1;
@@ -4888,6 +4888,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   vertical-align: baseline;
   background-color: #999999;
   border-radius: 10px;
+  width: 80px;
 }
 
 .badge:empty {
@@ -4899,6 +4900,32 @@ a.badge:focus {
   color: #ffffff;
   text-decoration: none;
   cursor: pointer;
+}
+
+
+.badge-error {
+  background-color: #b94a48;
+}
+.badge-error:hover {
+  background-color: #953b39;
+}
+.badge-warning {
+  background-color: #f89406;
+}
+.badge-warning:hover {
+  background-color: #c67605;
+}
+.badge-success {
+  background-color: #468847;
+}
+.badge-success:hover {
+  background-color: #356635;
+}
+.badge-info {
+  background-color: #3a87ad;
+}
+.badge-info:hover {
+  background-color: #2d6987;
 }
 
 .btn .badge {

@@ -78,7 +78,7 @@
                 <th>Name</th>
                 <th>Contact Number</th>
                 <th>Username</th>
-                <th>Action</th>
+                <th style="text-align:center;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -108,8 +108,8 @@
     <td><%= number %></td>
     <td><%= username %></td>
     <td class="confirmation">
-      <span class="edit btn-success btn-mini btn" id="<%= id %>" title="<%= position %>">Edit</span> | 
-      <span class="delete btn-danger btn-mini btn" id="<%= id %>" title="<%= position %>">Delete</span>
+      <span class="edit badge badge-success" id="<%= id %>" title="<%= position %>">Edit</span> | 
+      <span class="delete badge badge-error" id="<%= id %>" title="<%= position %>">Delete</span>
     </td>
   </script>
   <script type="text/template" id="editContact_template">
@@ -118,8 +118,8 @@
     <td><input type="text" name="editNumber" value="<%= number %>"></td>
     <td><input type="text" name="editUsername" value="<%= username %>"></td>
     <td class="confirmation">
-      <span class="done btn-success btn-mini btn" id="<%= id %>" title='<%= position %>'>Done</span> | 
-      <span class="cancel btn-danger btn-mini btn" id="<%= id %>" title="<%= position %>">Cancel</span>
+      <span class="done badge badge-success" id="<%= id %>" title='<%= position %>'>Done</span> | 
+      <span class="cancel badge badge-warning" id="<%= id %>" title="<%= position %>">Cancel</span>
     </td>
   </script>
 </body>
