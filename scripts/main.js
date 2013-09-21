@@ -46,7 +46,6 @@
         person.save(person.toJSON(), {
           success: function (contact) {
             router.navigate('', {trigger: true});
-            console.log();
             var addedContact = new personModel({
               name: contact.get('name'),
               number: contact.get('number'),
@@ -58,6 +57,8 @@
             addedContact.set("position", self.collection.length);
             var view = new PersonView({model: addedContact});
             self.contacts_list.append(view.render().el);
+
+            alert('Adding contact person successfully!');
           }
         });
       },
