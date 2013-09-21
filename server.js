@@ -64,7 +64,7 @@ function createContact(req, res) {
 	});
 }
 
-function contactInfo(req, res) {
+function ContactInfo(req, res) {
     console.log(req.params.id);
 	Person.findById(req.params.id, function (err, doc) {
 		if (err) {
