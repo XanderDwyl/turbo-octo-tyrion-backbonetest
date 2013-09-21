@@ -41,7 +41,7 @@
           number: this.input_number.val(),
           username: this.input_username.val()
         });
-
+        
         //save entry
         person.save(person.toJSON(), {
           success: function (contact) {
@@ -61,6 +61,8 @@
             alert('Adding contact person successfully!');
           }
         });
+
+        
       },
       deleteContact: function (evt) {
         evt.preventDefault();
