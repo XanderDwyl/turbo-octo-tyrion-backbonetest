@@ -64,6 +64,18 @@ function createContact(req, res) {
 	});
 }
 
+function contactInfo(req, res) {
+    console.log(req.params.id);
+	Person.findById(req.params.id, function (err, doc) {
+		if (err) {
+			console.log(err);
+			res.send(500, err);
+		} else {
+			res.send(200, doc);
+		}
+	})
+}
+
 function deleteContactById(req, res) {
 	var id = req.params.id;
 	Contact.findByIdAndRemove(id, function (err, doc) {
@@ -94,6 +106,7 @@ function updateContactById(req, res) {
 }
 
 app.get('/contacts', listContacts);
+app.get('/contacts/:id', ContactInfo);
 app.post('/contacts', createContact);
 app.put('/contacts/:id', updateContactById);
 app.delete('/contacts/:id', deleteContactById);

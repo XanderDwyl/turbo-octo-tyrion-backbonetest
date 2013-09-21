@@ -116,14 +116,21 @@
     <td><%= name %></td>
     <td><%= number %></td>
     <td><%= username %></td>
-    <td class="controls"><a href="#" class="edit" data-toggle="tooltip" title="Edit <%= position %>">Edit</a> | <a href="#" class="delete" data-toggle="tooltip" title="Delete <%= position %>">Delete</a></td>
+    <td class="controls">
+      <a href="#" class="edit" id="<%= id %>" title="<%= position %><%= username %>">Edit</a> | 
+      <a href="#" class="delete" id="<%= id %>" title="<%= position %><%= username %>">Delete</a>
+      <input type="hidden" id="<%= id %>" value="<%= id %>">
+    </td>
   </script>
-  <script type="text/template" id="edit_mode_template">
+  <script type="text/template" id="editContact_template">
     <td><%= position %></td>
-    <td><input type="text" name="fullname" value="<%= name %>"></td>
-    <td><input type="text" name="number" value="<%= number %>"></td>
-    <td><input type="text" name="username" value="<%= username %>"></td>
-    <td class="confirmation"><span class="done">Done</span><span class="cancel">Cancel</span></td>
+    <td><input type="text" name="editFullname" value="<%= name %>"></td>
+    <td><input type="text" name="editNumber" value="<%= number %>"></td>
+    <td><input type="text" name="editUsername" value="<%= username %>"></td>
+    <td class="confirmation">
+      <span class="done" id="<%= id %>" title='<%= position %><%= username %>'>Done</span> | 
+      <span class="cancel" title="<%= position %><%= username %>">Cancel</span>
+    </td>
   </script>
 </body>
 </html> 
