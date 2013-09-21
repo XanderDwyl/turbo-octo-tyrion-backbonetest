@@ -119,7 +119,7 @@
       events: {
         'click .edit'     : 'render',
         'click .done'     : 'saveContact',               
-        'click .cancel'     : 'cancelEdit'
+        'click .cancel'   : 'cancelEdit'
       },
       initialize: function () {
         this.input_name = $('#inputs input[name=fullname]');
@@ -171,17 +171,14 @@
         updateContact = new personModel({
           name: this.input_name.val(),
           number: this.input_number.val(),
-          username: this.input_username.val(),
-          //_id: evt.target.id
+          username: this.input_username.val()
         });
 
         this.collection.add(person);
-        console.log(evt.target.id);
 
-        updateContact.save({_id: evt.target.id}, {
+        updateContact.save({id: evt.target.id}, {
           success: function (contact) {
-            //router.navigate('', {trigger: true});
-            alert(updateContact.toJSON());
+            alert('Update successfully!');
           }
         });
       },
