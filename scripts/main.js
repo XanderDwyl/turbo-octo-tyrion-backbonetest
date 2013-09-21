@@ -95,24 +95,37 @@
         });        
       },
       cancelEdit: function (evt) {
-        // /*var i =0;
-        // var cntChild = (this.contacts_list[0].childElementCount) - 1;
-        // for(var i=cntChild;i>0;i--){
-        //   this.contacts_list[0].children[i].remove();
-        // }
-        // */
+        evt.preventDefault();
+        
+        var self = this;
+        var contacts = new personCollection();
 
-        // evt.preventDefault();
-  
-        // this.$el.find('tr#' + evt.target.title).empty();        
-        // var person = new personModel({
-        //   name: 'test',
-        //   number: 'dfd',
-        //   username: 'testd'
-        // });
-        // person.set("position", (evt.target.title).replace(/[^0-9]+/ig,""));
-        // var view = new PersonView({model: person});
-        // this.$el.find('tr#' + evt.target.title).append(view.render().el.innerHTML);
+        contacts.fetch({
+          success: function (contactInfo) { 
+            var editOk= 0;
+            for (var i=0; i< contactInfo.models.length; i++){
+              if (contactInfo.models[i].get('_id') === evt.target.id) { 
+                person = new personModel({
+                  name: contactInfo.models[i].get('name'),
+                  number: contactInfo.models[i].get('number'),
+                  username: contactInfo.models[i].get('username'),
+                  id: contactInfo.models[i].get('_id')
+                });                
+                editOk = 1;
+              }
+            }
+            
+            if(editOk) {
+              self.$el.find('tr#' + evt.target.id).empty();      // empty the field
+    
+              person.set("position", evt.target.title);
+              var view = new PersonView({model: person});
+              self.$el.find('tr#' + evt.target.id).append(view.render().el.innerHTML);
+            } else {
+              alert("unknown contact");
+            } 
+          }
+        });
 
       },
       render: function () {
