@@ -162,8 +162,8 @@
       },
       saveContact: function (evt) {
         evt.preventDefault();
-        var person = $(evt.currentTarget).serializeObject();
-
+        var self = this;
+        
         this.input_name = $('input[name=editFullname]');
         this.input_number = $('input[name=editNumber]');
         this.input_username = $('input[name=editUsername]');
@@ -178,6 +178,10 @@
 
         updateContact.save({id: evt.target.id}, {
           success: function (contact) {
+            self.$el.find('tr#' + evt.target.id).empty();
+            updateContact.set("position", evt.target.title);
+            var view = new PersonView({model: updateContact});
+            self.$el.find('tr#' + evt.target.id).append(view.render().el.innerHTML);
             alert('Update successfully!');
           }
         });
