@@ -25,9 +25,7 @@
     var contactListView = Backbone.View.extend({
       el: '.page .table tbody',   
       events: {
-        'click #add_contact': 'addContact',        
-        'click .cancel'     : 'cancelEdit',
-        'click .done'       : 'saveContact',
+        'click #add_contact': 'addContact', 
         'click .delete'     : 'deleteContact'
       },
       initialize: function () {
@@ -93,41 +91,7 @@
             } 
           }
         });        
-      },
-      cancelEdit: function (evt) {
-        evt.preventDefault();
-        
-        var self = this;
-        var contacts = new personCollection();
-
-        contacts.fetch({
-          success: function (contactInfo) { 
-            var editOk= 0;
-            for (var i=0; i< contactInfo.models.length; i++){
-              if (contactInfo.models[i].get('_id') === evt.target.id) { 
-                person = new personModel({
-                  name: contactInfo.models[i].get('name'),
-                  number: contactInfo.models[i].get('number'),
-                  username: contactInfo.models[i].get('username'),
-                  id: contactInfo.models[i].get('_id')
-                });                
-                editOk = 1;
-              }
-            }
-            
-            if(editOk) {
-              self.$el.find('tr#' + evt.target.id).empty();      // empty the field
-    
-              person.set("position", evt.target.title);
-              var view = new PersonView({model: person});
-              self.$el.find('tr#' + evt.target.id).append(view.render().el.innerHTML);
-            } else {
-              alert("unknown contact");
-            } 
-          }
-        });
-
-      },
+      },      
       render: function () {
         var self = this;
         var contacts = new personCollection();
@@ -154,7 +118,8 @@
       el: '.page .table tbody',
       events: {
         'click .edit'     : 'render',
-        'click .done'     : 'saveContact'
+        'click .done'     : 'saveContact',               
+        'click .cancel'     : 'cancelEdit'
       },
       initialize: function () {
         this.input_name = $('#inputs input[name=fullname]');
@@ -217,6 +182,39 @@
           success: function (contact) {
             //router.navigate('', {trigger: true});
             alert(updateContact.toJSON());
+          }
+        });
+      },
+      cancelEdit: function (evt) {
+        evt.preventDefault();
+        
+        var self = this;
+        var contacts = new personCollection();
+
+        contacts.fetch({
+          success: function (contactInfo) { 
+            var editOk= 0;
+            for (var i=0; i< contactInfo.models.length; i++){
+              if (contactInfo.models[i].get('_id') === evt.target.id) { 
+                person = new personModel({
+                  name: contactInfo.models[i].get('name'),
+                  number: contactInfo.models[i].get('number'),
+                  username: contactInfo.models[i].get('username'),
+                  id: contactInfo.models[i].get('_id')
+                });                
+                editOk = 1;
+              }
+            }
+            
+            if(editOk) {
+              self.$el.find('tr#' + evt.target.id).empty();      // empty the field
+    
+              person.set("position", evt.target.title);
+              var view = new PersonView({model: person});
+              self.$el.find('tr#' + evt.target.id).append(view.render().el.innerHTML);
+            } else {
+              alert("unknown contact");
+            } 
           }
         });
       }
